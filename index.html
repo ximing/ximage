@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ximage</title>
+    <script>
+      (function () {
+        if (location.protocol === "file:") return;
+        var saved = null;
+        try {
+          saved = localStorage.getItem("ximage-theme");
+        } catch (e) {}
+        if (saved !== "light" && saved !== "dark") {
+          saved = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+        document.documentElement.dataset.theme = saved;
+      })();
+    </script>
+    <script>
+      (function () {
+        if (location.protocol !== "file:") return;
+        function show() {
+          var root = document.getElementById("root");
+          if (!root) return;
+          root.replaceChildren();
+          var box = document.createElement("main");
+          box.id = "file-protocol-notice";
+          box.setAttribute("role", "alert");
+          var title = document.createElement("h1");
+          title.textContent = "Serve this folder over HTTP";
+          var copy = document.createElement("p");
+          copy.textContent =
+            "Ximage cannot run from a file:// address because browsers block module scripts there. Build the site, then serve the dist folder over HTTP. From the project that is: npm run build, then npx serve dist. A GitHub Pages project site works the same way.";
+          box.appendChild(title);
+          box.appendChild(copy);
+          root.appendChild(box);
+        }
+        if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", show);
+        else show();
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
