@@ -5,10 +5,10 @@ Remove the background from JPG and PNG images in the browser. The cutout runs in
 The static `dist` folder can be hosted on a GitHub Pages project site. Asset URLs are relative.
 
 ```bash
-npm install
-npm test
-npm run build
-npx serve dist
+pnpm install
+pnpm test
+pnpm run build
+pnpm dlx serve dist
 ```
 
 Opening `dist/index.html` with `file://` shows a short instruction instead of a blank page. Serve the folder over HTTP.

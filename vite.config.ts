@@ -5,7 +5,7 @@ export default defineConfig({
   base: './',
   plugins: [react()],
   optimizeDeps: {
-    exclude: ['onnxruntime-web', '@bunnio/rembg-web'],
+    exclude: ['onnxruntime-web', '@bunnio/rembg-web', '@jsquash/jpeg', '@jsquash/oxipng', '@jsquash/webp'],
   },
   build: {
     target: 'es2022',
