@@ -21,7 +21,7 @@ async function loadOnce(logName) {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
   const pageErrors = [];
   page.on('pageerror', (error) => pageErrors.push(String(error)));
-  await page.goto(hosted.origin, { waitUntil: 'networkidle' });
+  await page.goto(`${hosted.origin}#/remove-background`, { waitUntil: 'networkidle' });
   const workspace = page.getByTestId('workspace');
   const theme = page.getByTestId('theme-toggle');
   await workspace.waitFor();

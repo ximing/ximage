@@ -1,3 +1,4 @@
+import { phrase } from '../i18n/phrase';
 export type Rgba = {
   r: number;
   g: number;
@@ -13,7 +14,7 @@ export type PixelImage = {
 export function parseCssColor(value: string): Rgba {
   const hex = value.trim().replace(/^#/, '');
   if (!/^[0-9a-fA-F]{6}$/.test(hex)) {
-    throw new Error('Use a 6-digit hex color.');
+    throw new Error(phrase('error.hex'));
   }
   return {
     r: Number.parseInt(hex.slice(0, 2), 16),
@@ -41,7 +42,7 @@ export function compositeSubject(
 ): PixelImage {
   const count = source.width * source.height;
   if (mask.length !== count) {
-    throw new Error('The mask does not match the image size.');
+    throw new Error(phrase('error.maskSize'));
   }
   const data = new Uint8ClampedArray(source.data.length);
   for (let index = 0; index < count; index += 1) {

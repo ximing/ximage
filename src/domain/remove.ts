@@ -1,5 +1,6 @@
 import { newSession, rembgConfig, remove, type BaseSession } from '@bunnio/rembg-web';
 import * as ort from 'onnxruntime-web';
+import { isPhrase, phrase } from '../i18n/phrase';
 
 export type RemovalProgress = {
   progress: number;
@@ -15,9 +16,9 @@ export type Cutout = {
 let sessionPromise: Promise<BaseSession> | null = null;
 
 function progressMessage(progress: number): string {
-  if (progress < 35) return `Loading the on-device model (${progress}%)`;
-  if (progress < 75) return `Finding the subject (${progress}%)`;
-  return `Cutting out the background (${progress}%)`;
+  if (progress < 35) return phrase('busy.loadingModel', { progress });
+  if (progress < 75) return phrase('busy.findingSubject', { progress });
+  return phrase('busy.cuttingOut', { progress });
 }
 
 function modelBaseUrl(): string {
@@ -73,8 +74,9 @@ export async function removeBackground(
     const fitted = await fitToSource(png, width, height);
     return { width, height, png: fitted };
   } catch (error) {
-    const detail = error instanceof Error && error.message ? error.message : 'Unknown error';
-    throw new Error(`Background removal failed. ${detail}`);
+    if (error instanceof Error && isPhrase(error.message)) throw error;
+    const detail = error instanceof Error && error.message ? error.message : phrase('error.unknown');
+    throw new Error(phrase('error.removalFailed', { detail }));
   }
 }
 
@@ -86,11 +88,11 @@ async function fitToSource(png: Blob, width: number, height: number): Promise<Bl
     canvas.width = width;
     canvas.height = height;
     const context = canvas.getContext('2d');
-    if (!context) throw new Error('Canvas is not available in this browser.');
+    if (!context) throw new Error(phrase('error.canvas'));
     context.drawImage(bitmap, 0, 0, width, height);
     return await new Promise((resolve, reject) => {
       canvas.toBlob((blob) => {
-        if (!blob) reject(new Error('Could not encode the cutout.'));
+        if (!blob) reject(new Error(phrase('error.cutoutEncode')));
         else resolve(blob);
       }, 'image/png');
     });

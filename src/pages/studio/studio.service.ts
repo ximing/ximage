@@ -3,6 +3,7 @@ import { decodeImage, encodePng, maskFromCutout } from '../../browser/pixels';
 import { acceptFiles } from '../../domain/accept';
 import { compositeSubject, parseCssColor, type PixelImage } from '../../domain/composite';
 import { archiveDownloads, collectDownloads, cutoutFilename, saveBlob, type Downloadable } from '../../domain/download';
+import { phrase } from '../../i18n/phrase';
 
 
 export type QueueStatus = 'queued' | 'running' | 'done' | 'error';
@@ -60,7 +61,7 @@ export class StudioService extends Service {
         filename,
         status: 'queued',
         progress: 0,
-        message: 'Waiting',
+        message: phrase('status.waiting'),
         error: '',
         width: 0,
         height: 0,
@@ -102,7 +103,7 @@ export class StudioService extends Service {
     item.status = 'running';
     item.error = '';
     item.progress = 0;
-    item.message = 'Loading the on-device model (0%)';
+    item.message = phrase('busy.loadingModel', { progress: 0 });
     try {
       const { removeBackground } = await import('../../domain/remove');
       const cutout = await removeBackground(record.file, (update) => {
@@ -116,9 +117,9 @@ export class StudioService extends Service {
       await this.publish(id);
       item.status = 'done';
       item.progress = 100;
-      item.message = 'Background removed';
+      item.message = phrase('status.backgroundRemoved');
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'The on-device model did not start.';
+      const message = error instanceof Error ? error.message : phrase('error.modelStart');
       item.status = 'error';
       item.progress = 0;
       item.error = message;

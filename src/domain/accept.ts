@@ -1,3 +1,5 @@
+import { phrase } from '../i18n/phrase';
+
 export type AcceptedFile = {
   name: string;
   type: string;
@@ -25,7 +27,7 @@ export function acceptFiles(files: readonly File[]): {
     } else {
       rejected.push({
         name,
-        reason: 'Only JPG and PNG images can be added.',
+        reason: phrase('reason.jpgPng'),
       });
     }
   }

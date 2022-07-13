@@ -1,0 +1,94 @@
+/* Design tokens, reset, and type. Component styles live next to their modules. */
+
+:root {
+  color-scheme: dark;
+  --font-display: "Bricolage Grotesque", "PingFang SC", "Noto Sans SC", sans-serif;
+  --font-ui: Figtree, "PingFang SC", "Noto Sans SC", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+
+  --bg: #0e1013;
+  --surface: #14171c;
+  --raised: #1a1e25;
+  --inset: #0a0c0f;
+  --line: #23272f;
+  --line-strong: #333945;
+  --ink: #f2f4f8;
+  --muted: #98a1b0;
+  --faint: #646e7d;
+  --accent: #ff5a1f;
+  --accent-ink: #1d0c02;
+  --accent-soft: rgba(255, 90, 31, .13);
+  --ok: #34c77b;
+  --danger: #ff6b5e;
+  --checker-a: #181c22;
+  --checker-b: #20252d;
+  --shadow-pop: 0 12px 40px rgba(0, 0, 0, .5);
+  --radius-s: 8px;
+  --radius-m: 12px;
+  --radius-l: 18px;
+  --speed: .14s;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f2f3f6;
+  --surface: #ffffff;
+  --raised: #f6f7f9;
+  --inset: #e9ebef;
+  --line: #e0e3e9;
+  --line-strong: #c9cdd6;
+  --ink: #171a20;
+  --muted: #5c6572;
+  --faint: #8b94a1;
+  --accent: #e8480c;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(232, 72, 12, .09);
+  --ok: #15803d;
+  --danger: #d43d2f;
+  --checker-a: #dde1e7;
+  --checker-b: #cdd2da;
+  --shadow-pop: 0 12px 40px rgba(20, 25, 35, .14);
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+html { -webkit-font-smoothing: antialiased; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+button, input, select, textarea { font: inherit; color: inherit; }
+
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+button:disabled { cursor: not-allowed; opacity: .45; }
+
+a { color: inherit; }
+
+::selection { background: var(--accent); color: var(--accent-ink); }
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}

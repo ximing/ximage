@@ -17,7 +17,7 @@ function distPath() {
 }
 
 try {
-  await page.goto(hosted.origin, { waitUntil: 'networkidle' });
+  await page.goto(`${hosted.origin}#/remove-background`, { waitUntil: 'networkidle' });
   await page.setInputFiles('[data-testid=file-input]', fixture);
   await page.getByTestId('remove-background').click();
   await page.waitForFunction(() => {

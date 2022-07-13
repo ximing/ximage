@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,6 +16,14 @@
         }
         document.documentElement.dataset.theme = saved;
       })();
+      (function () {
+        var saved = null;
+        try {
+          saved = localStorage.getItem("ximage-locale");
+        } catch (e) {}
+        if (saved !== "en" && saved !== "zh") saved = "zh";
+        document.documentElement.lang = saved;
+      })();
     </script>
     <script>
       (function () {
@@ -27,11 +35,21 @@
           var box = document.createElement("main");
           box.id = "file-protocol-notice";
           box.setAttribute("role", "alert");
+          var lang = document.documentElement.lang === "en" ? "en" : "zh";
+          var copyText = {
+            zh: {
+              title: "请通过 HTTP 打开这个文件夹",
+              body: "Ximage 不能从 file:// 地址运行，因为浏览器会拦截那里的模块脚本。请先构建站点，再用 HTTP 打开 dist 文件夹。在项目目录里执行：pnpm run build，然后 pnpm dlx serve dist。GitHub Pages 项目站点也是同样的方式。",
+            },
+            en: {
+              title: "Serve this folder over HTTP",
+              body: "Ximage cannot run from a file:// address because browsers block module scripts there. Build the site, then serve the dist folder over HTTP. From the project that is: pnpm run build, then pnpm dlx serve dist. A GitHub Pages project site works the same way.",
+            },
+          };
           var title = document.createElement("h1");
-          title.textContent = "Serve this folder over HTTP";
+          title.textContent = copyText[lang].title;
           var copy = document.createElement("p");
-          copy.textContent =
-            "Ximage cannot run from a file:// address because browsers block module scripts there. Build the site, then serve the dist folder over HTTP. From the project that is: npm run build, then npx serve dist. A GitHub Pages project site works the same way.";
+          copy.textContent = copyText[lang].body;
           box.appendChild(title);
           box.appendChild(copy);
           root.appendChild(box);

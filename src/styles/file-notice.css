@@ -1,0 +1,12 @@
+#file-protocol-notice {
+  max-width: 38rem;
+  margin: 12vh auto;
+  padding: 0 24px;
+  font-family: var(--font-ui);
+  color: var(--ink);
+}
+
+#file-protocol-notice h1 {
+  font-family: var(--font-display);
+  letter-spacing: -.03em;
+}

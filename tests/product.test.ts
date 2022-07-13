@@ -4,6 +4,7 @@ import { describe, expect, test } from 'vitest';
 import { acceptFiles } from '../src/domain/accept';
 import { compositeSubject } from '../src/domain/composite';
 import { archiveDownloads, collectDownloads, cutoutFilename } from '../src/domain/download';
+import { phrase } from '../src/i18n/phrase';
 import { ThemeService } from '../src/services/theme.service';
 
 function imageFile(name: string, type: string): File {
@@ -19,7 +20,7 @@ describe('shipped acceptance, theme, composite, and batch', () => {
 
     expect(result.accepted.map((file) => file.name)).toEqual(['portrait.jpg', 'object.png']);
     expect(result.rejected).toEqual([
-      { name: 'notes.gif', reason: 'Only JPG and PNG images can be added.' },
+      { name: 'notes.gif', reason: phrase('reason.jpgPng') },
     ]);
   });
 

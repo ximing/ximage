@@ -1,0 +1,7 @@
+.unavailable {
+  min-height: calc(100dvh - 58px);
+  background: var(--inset);
+}
+
+.unavailable .hero { background: transparent; }
+.unavailable .drop { max-width: min(640px, calc(100% - 48px)); }

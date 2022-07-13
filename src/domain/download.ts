@@ -1,4 +1,5 @@
 import { zipSync } from 'fflate';
+import { phrase } from '../i18n/phrase';
 
 export type Downloadable = {
   filename: string;
@@ -30,7 +31,7 @@ export function collectDownloads(
 
 export function archiveDownloads(files: readonly Downloadable[]): Uint8Array {
   if (files.length < 2) {
-    throw new Error('An archive needs at least two images.');
+    throw new Error(phrase('error.archive'));
   }
   const entries: Record<string, Uint8Array> = {};
   for (const file of files) {

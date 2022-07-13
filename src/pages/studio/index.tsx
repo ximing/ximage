@@ -1,134 +1,145 @@
 import { bindServices, observer, useService } from '@rabjs/react';
-import { ReactCompareSlider } from 'react-compare-slider';
 import { useDropzone } from 'react-dropzone';
-import { ThemeService } from '../../services/theme.service';
+import { CompareView } from '../../components/compare-view';
+import { IconCheck, IconDownload, IconLock, IconPlus, IconUpload, IconX } from '../../components/icons';
+import '../../components/tool-workspace.css';
+import { usePhrase, useText } from '../../i18n/use-text';
 import { StudioService, type QueueItem } from './studio.service';
-
-const Fit = observer(({ src, alt, checker }: { src: string; alt: string; checker: boolean }) => {
-  return (
-    <div className={checker ? 'fit checker' : 'fit'}>
-      <img src={src} alt={alt} draggable={false} />
-    </div>
-  );
-});
+import './studio.css';
 
 const StudioContent = observer(() => {
   const studio = useService(StudioService);
-  const theme = useService(ThemeService);
+  const t = useText();
+  const show = usePhrase();
   const drop = useDropzone({
     multiple: true,
     noClick: true,
     onDrop: (files) => studio.addFiles(files),
   });
   const selected = studio.selected;
+  const idle = studio.items.length === 0;
 
   return (
-    <div className="app">
-      <header className="top">
-        <div className="brand">
-          <span className="mark">Ximage</span>
-          <p>Background removal, on this device</p>
-        </div>
-        <button
-          type="button"
-          className="theme"
-          data-testid="theme-toggle"
-          aria-pressed={theme.theme === 'dark'}
-          onClick={() => theme.toggle()}
-        >
-          {theme.theme === 'dark' ? 'Light theme' : 'Dark theme'}
-        </button>
-      </header>
-
+    <div className="page" data-testid="page-remove-background">
       <main
-        className={drop.isDragActive ? 'workspace is-drag' : 'workspace'}
+        className={
+          idle
+            ? (drop.isDragActive ? 'bench bench-idle is-drag' : 'bench bench-idle')
+            : (drop.isDragActive ? 'bench is-drag' : 'bench')
+        }
         data-testid="workspace"
         {...drop.getRootProps()}
       >
         <input {...drop.getInputProps()} data-testid="file-input" />
-        <section className="hero" aria-label="Selected image">
+        <section className="hero" aria-label={t('common.selectedImage')}>
           {selected ? (
             <SelectedImage item={selected} />
           ) : (
-            <div className="empty">
-              <h1>
-                Drop
-                <br />
-                <span>a photo</span>
-              </h1>
-              <p>JPG or PNG. The cutout runs in this browser, and the file is not uploaded.</p>
-              <button type="button" className="primary" onClick={() => drop.open()}>
-                Choose images
+            <div className="drop">
+              <div className="drop-ic"><IconUpload /></div>
+              <h1>{t('common.dropWhat', { what: t('drop.aPhoto') })}</h1>
+              <p className="drop-or">{t('common.or')}</p>
+              <button type="button" className="btn btn-primary" onClick={() => drop.open()}>
+                {t('common.choose')}
               </button>
+              <p className="drop-copy">{t('page.studio.empty')}</p>
             </div>
           )}
         </section>
 
-        {studio.rejections.length > 0 ? (
-          <ul className="rejections" role="alert" data-testid="rejection">
-            {studio.rejections.map((rejection) => (
-              <li key={rejection.name}>{rejection.name}: {rejection.reason}</li>
-            ))}
-          </ul>
+        {!idle ? (
+          <aside className="rail">
+            <div className="rail-scroll">
+              <div className="rail-head">
+                <h2>{t('tools.remove-background.title')}</h2>
+                <p className="rail-sub">{t('common.queueCount', { count: studio.items.length })}</p>
+              </div>
+              {studio.rejections.length > 0 ? (
+                <ul className="rejections" role="alert" data-testid="rejection">
+                  {studio.rejections.map((rejection) => (
+                    <li key={rejection.name}>{rejection.name}: {show(rejection.reason)}</li>
+                  ))}
+                </ul>
+              ) : null}
+              {studio.bannerError ? (
+                <p className="banner" role="alert" data-testid="model-error">{show(studio.bannerError)}</p>
+              ) : null}
+              {selected ? <BackgroundPicker item={selected} /> : null}
+            </div>
+            <footer className="rail-foot">
+              <button
+                type="button"
+                className="btn btn-primary btn-block"
+                data-testid="remove-background"
+                disabled={studio.items.length === 0 || studio.$model.removeAll.loading}
+                onClick={() => {
+                  void studio.removeAll();
+                }}
+              >
+                {studio.$model.removeAll.loading ? t('common.removing') : t('common.remove')}
+              </button>
+              <button
+                type="button"
+                className="btn btn-ghost btn-block"
+                data-testid="download-selected"
+                disabled={!selected || selected.status !== 'done'}
+                onClick={() => selected && studio.downloadOne(selected.id)}
+              >
+                {t('common.downloadThis')}
+              </button>
+              {studio.doneCount >= 2 ? (
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-block"
+                  data-testid="download-all"
+                  onClick={() => studio.downloadAll()}
+                >
+                  {t('common.downloadAll')}
+                </button>
+              ) : null}
+              <span className="privacy"><IconLock />{t('common.localOnly')}</span>
+            </footer>
+          </aside>
         ) : null}
 
-        {studio.bannerError ? (
-          <p className="banner" role="alert" data-testid="model-error">{studio.bannerError}</p>
-        ) : null}
-
-        <footer className="dock">
-          {studio.items.length > 0 ? (
-            <div className="strip" aria-label="Images">
-              {studio.items.map((item) => (
-                <div key={item.id} className={item.id === studio.selectedId ? 'thumb is-selected' : 'thumb'}>
-                  <button type="button" className="thumb-pick" onClick={() => studio.select(item.id)}>
-                    <img src={item.resultUrl || item.sourceUrl} alt="" />
-                    <span>{item.name}</span>
-                  </button>
+        {studio.items.length > 0 ? (
+          <div className="strip" aria-label={t('common.images')}>
+            {studio.items.map((item) => (
+              <div key={item.id} className={item.id === studio.selectedId ? 'thumb on' : 'thumb'}>
+                <button type="button" className="thumb-pick" onClick={() => studio.select(item.id)}>
+                  <img src={item.resultUrl || item.sourceUrl} alt="" />
+                  <span className="t-meta">
+                    <span className="t-name">{item.name}</span>
+                    <span className="t-sub">
+                      {item.status === 'done' && item.width > 0
+                        ? `${item.width}×${item.height}`
+                        : show(item.message)}
+                    </span>
+                  </span>
+                </button>
+                {item.status === 'done' ? <span className="t-state done"><IconCheck /></span> : null}
+                {item.status === 'error' ? <span className="t-state err"><IconX /></span> : null}
+                {item.status === 'running' ? (
+                  <span className="t-prog"><i style={{ width: `${Math.max(0, Math.min(100, item.progress))}%` }} /></span>
+                ) : null}
+                <div className="thumb-acts">
                   {item.status === 'done' ? (
-                    <button type="button" onClick={() => studio.downloadOne(item.id)}>
-                      Download
+                    <button type="button" aria-label={t('common.download')} onClick={() => studio.downloadOne(item.id)}>
+                      <IconDownload />
                     </button>
                   ) : null}
-                  <button type="button" onClick={() => studio.discard(item.id)}>
-                    Discard
+                  <button type="button" aria-label={t('common.discard')} onClick={() => studio.discard(item.id)}>
+                    <IconX />
                   </button>
                 </div>
-              ))}
-            </div>
-          ) : null}
-          <div className="actions">
-            {studio.items.length > 0 ? (
-              <button type="button" onClick={() => drop.open()}>
-                Add images
-              </button>
-            ) : null}
-            <button
-              type="button"
-              className="primary"
-              data-testid="remove-background"
-              disabled={studio.items.length === 0 || studio.$model.removeAll.loading}
-              onClick={() => {
-                void studio.removeAll();
-              }}
-            >
-              {studio.$model.removeAll.loading ? 'Removing background' : 'Remove background'}
+              </div>
+            ))}
+            <button type="button" className="thumb-add" onClick={() => drop.open()}>
+              <IconPlus />
+              {t('common.add')}
             </button>
-            <button
-              type="button"
-              data-testid="download-selected"
-              disabled={!selected || selected.status !== 'done'}
-              onClick={() => selected && studio.downloadOne(selected.id)}
-            >
-              Download this image
-            </button>
-            {studio.doneCount >= 2 ? (
-              <button type="button" data-testid="download-all" onClick={() => studio.downloadAll()}>
-                Download all
-              </button>
-            ) : null}
           </div>
-        </footer>
+        ) : null}
       </main>
     </div>
   );
@@ -136,50 +147,60 @@ const StudioContent = observer(() => {
 
 const SelectedImage = observer(({ item }: { item: QueueItem }) => {
   const studio = useService(StudioService);
+  const t = useText();
+  const show = usePhrase();
+
+  return (
+    <>
+      {item.resultUrl ? (
+        <CompareView
+          testId="compare"
+          before={item.sourceUrl}
+          after={item.resultUrl}
+          beforeLabel={t('common.original')}
+          afterLabel={t('common.backgroundRemoved')}
+          alt={item.name}
+          checker={studio.background === null}
+        />
+      ) : (
+        <div className="fit">
+          <img src={item.sourceUrl} alt={item.name} />
+        </div>
+      )}
+      {item.status === 'running' || item.status === 'error' ? (
+        <div className="status" data-testid="status" role="status">
+          <p>{show(item.message)}</p>
+          {item.status === 'running' ? <progress value={item.progress} max={100} /> : null}
+        </div>
+      ) : (
+        <div className="result-chip">
+          <span className="mono name">{item.name}</span>
+          {item.width > 0 ? (
+            <>
+              <span className="sep" />
+              <span className="mono">{item.width} × {item.height}</span>
+            </>
+          ) : null}
+        </div>
+      )}
+    </>
+  );
+});
+
+const BackgroundPicker = observer(({ item }: { item: QueueItem }) => {
+  const studio = useService(StudioService);
+  const t = useText();
   const colors = [
-    { id: 'transparent', label: 'Transparent', value: null },
-    { id: 'white', label: 'White', value: '#ffffff' },
-    { id: 'black', label: 'Black', value: '#000000' },
+    { id: 'transparent', label: t('common.transparent'), value: null },
+    { id: 'white', label: t('common.white'), value: '#ffffff' },
+    { id: 'black', label: t('common.black'), value: '#000000' },
   ] as const;
 
   return (
-    <div className="selected">
-      <div className="frame">
-        {item.resultUrl ? (
-          <div className="compare" data-testid="compare">
-            <ReactCompareSlider
-              defaultPosition={50}
-              itemOne={<Fit src={item.sourceUrl} alt="Original" checker={false} />}
-              itemTwo={
-                <Fit
-                  src={item.resultUrl}
-                  alt="Background removed"
-                  checker={studio.background === null}
-                />
-              }
-              handle={<span className="handle" />}
-              style={{ width: '100%', height: '100%' }}
-            />
-          </div>
-        ) : (
-          <div className="fit">
-            <img src={item.sourceUrl} alt={item.name} />
-          </div>
-        )}
-        {item.status === 'running' || item.status === 'error' ? (
-          <div className="status" data-testid="status" role="status">
-            <p>{item.message}</p>
-            {item.status === 'running' ? <progress value={item.progress} max={100} /> : null}
-          </div>
-        ) : null}
-      </div>
-      <div className="meta">
-        <p className="caption">
-          {item.width > 0
-            ? `${item.width} × ${item.height} pixels, the same size as the original.`
-            : item.name}
-        </p>
-        <div className="colors" aria-label="Export background">
+    <div className="settings">
+      <div className="opt">
+        <span className="opt-label">{t('common.exportBackground')}</span>
+        <div className="seg" role="group" aria-label={t('common.exportBackground')}>
           {colors.map((color) => (
             <button
               key={color.id}
@@ -193,19 +214,19 @@ const SelectedImage = observer(({ item }: { item: QueueItem }) => {
               {color.label}
             </button>
           ))}
-          <label className="pick">
-            Color
-            <input
-              type="color"
-              value={studio.background && studio.background !== '#ffffff' && studio.background !== '#000000' ? studio.background : '#d6e4ff'}
-              disabled={item.status !== 'done'}
-              aria-label="Custom background color"
-              onChange={(event) => {
-                void studio.setBackground(event.target.value);
-              }}
-            />
-          </label>
         </div>
+        <label className="pick">
+          {t('common.color')}
+          <input
+            type="color"
+            value={studio.background && studio.background !== '#ffffff' && studio.background !== '#000000' ? studio.background : '#d6e4ff'}
+            disabled={item.status !== 'done'}
+            aria-label={t('common.customColor')}
+            onChange={(event) => {
+              void studio.setBackground(event.target.value);
+            }}
+          />
+        </label>
       </div>
     </div>
   );
