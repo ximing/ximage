@@ -1,6 +1,7 @@
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Home from './pages/home';
 import Compress from './pages/compress';
+import Resize from './pages/resize';
 import Studio from './pages/studio';
 import Unavailable from './pages/unavailable';
 import { Shell } from './shell';
@@ -9,6 +10,7 @@ import { tools, type Tool } from './tools/registry';
 function toolPage(tool: Tool) {
   if (tool.id === 'remove-background') return <Studio />;
   if (tool.id === 'compress') return <Compress />;
+  if (tool.id === 'resize') return <Resize />;
   return <Unavailable tool={tool} />;
 }
 
