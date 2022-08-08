@@ -3,6 +3,7 @@ import Home from './pages/home';
 import Compress from './pages/compress';
 import Crop from './pages/crop';
 import Resize from './pages/resize';
+import Rotate from './pages/rotate';
 import Studio from './pages/studio';
 import Unavailable from './pages/unavailable';
 import { Shell } from './shell';
@@ -13,6 +14,7 @@ function toolPage(tool: Tool) {
   if (tool.id === 'compress') return <Compress />;
   if (tool.id === 'resize') return <Resize />;
   if (tool.id === 'crop') return <Crop />;
+  if (tool.id === 'rotate') return <Rotate />;
   return <Unavailable tool={tool} />;
 }
 
