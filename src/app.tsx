@@ -4,10 +4,12 @@ import Compress from './pages/compress';
 import ConvertFromJpg from './pages/convert-from-jpg';
 import ConvertToJpg from './pages/convert-to-jpg';
 import Crop from './pages/crop';
+import Meme from './pages/meme';
 import Resize from './pages/resize';
 import Rotate from './pages/rotate';
 import Studio from './pages/studio';
 import Unavailable from './pages/unavailable';
+import Watermark from './pages/watermark';
 import { Shell } from './shell';
 import { tools, type Tool } from './tools/registry';
 
@@ -19,6 +21,8 @@ function toolPage(tool: Tool) {
   if (tool.id === 'rotate') return <Rotate />;
   if (tool.id === 'convert-to-jpg') return <ConvertToJpg />;
   if (tool.id === 'convert-from-jpg') return <ConvertFromJpg />;
+  if (tool.id === 'watermark') return <Watermark />;
+  if (tool.id === 'meme') return <Meme />;
   return <Unavailable tool={tool} />;
 }
 

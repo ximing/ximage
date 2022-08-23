@@ -1,0 +1,95 @@
+.mark-stage {
+  position: relative;
+  display: inline-block;
+  width: max-content;
+  max-width: min(72vw, 720px);
+  line-height: 0;
+}
+
+.mark-stage img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(72vw, 720px);
+  max-height: min(68vh, 620px);
+  border-radius: var(--radius-m);
+  box-shadow: var(--shadow-pop);
+}
+
+.mark-box {
+  position: absolute;
+  max-width: 78%;
+  padding: .35em .55em;
+  line-height: 1.15;
+  color: #fff;
+  white-space: pre-wrap;
+  border: 1.5px solid var(--accent);
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .45);
+  background: color-mix(in srgb, #0e1013 55%, transparent);
+  pointer-events: none;
+}
+
+.seg.pos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-areas:
+    "top-left top-center top-right"
+    ". center ."
+    "bottom-left bottom-center bottom-right";
+}
+
+.seg.pos-grid button { flex: none; }
+.seg.pos-grid button[data-pos='top-left'] { grid-area: top-left; }
+.seg.pos-grid button[data-pos='top-center'] { grid-area: top-center; }
+.seg.pos-grid button[data-pos='top-right'] { grid-area: top-right; }
+.seg.pos-grid button[data-pos='center'] { grid-area: center; }
+.seg.pos-grid button[data-pos='bottom-left'] { grid-area: bottom-left; }
+.seg.pos-grid button[data-pos='bottom-center'] { grid-area: bottom-center; }
+.seg.pos-grid button[data-pos='bottom-right'] { grid-area: bottom-right; }
+
+.file-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-m);
+  padding: 0 14px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  background: var(--inset);
+  color: var(--ink);
+}
+
+.file-button:hover { background: var(--raised); }
+
+.file-button input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.mark-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.mark-actions > button {
+  height: 40px;
+  padding: 0 14px;
+  border-radius: var(--radius-m);
+  border: 1px solid var(--line);
+  background: var(--inset);
+  font-weight: 600;
+  font-size: 14px;
+}
+.mark-actions > button[aria-pressed='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
