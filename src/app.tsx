@@ -5,6 +5,7 @@ import ConvertFromJpg from './pages/convert-from-jpg';
 import ConvertToJpg from './pages/convert-to-jpg';
 import Crop from './pages/crop';
 import Meme from './pages/meme';
+import HtmlToImage from './pages/html-to-image';
 import Resize from './pages/resize';
 import Rotate from './pages/rotate';
 import Studio from './pages/studio';
@@ -23,6 +24,7 @@ function toolPage(tool: Tool) {
   if (tool.id === 'convert-from-jpg') return <ConvertFromJpg />;
   if (tool.id === 'watermark') return <Watermark />;
   if (tool.id === 'meme') return <Meme />;
+  if (tool.id === 'html-to-image') return <HtmlToImage />;
   return <Unavailable tool={tool} />;
 }
 
