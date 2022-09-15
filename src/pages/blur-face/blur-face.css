@@ -1,0 +1,68 @@
+.blur-frame {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  overflow: auto;
+  padding: 24px;
+}
+
+.blur-stage {
+  position: relative;
+  display: inline-block;
+  max-width: min(100%, 760px);
+  line-height: 0;
+  touch-action: none;
+  user-select: none;
+  box-shadow: var(--shadow-pop);
+  border-radius: var(--radius-m);
+}
+
+.blur-stage img {
+  display: block;
+  max-width: 100%;
+  max-height: min(62vh, 620px);
+  width: auto;
+  height: auto;
+  border-radius: var(--radius-m);
+}
+
+.blur-stage.is-drawing,
+.blur-stage.is-drawing img { cursor: crosshair; }
+
+.blur-box {
+  position: absolute;
+  border: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .35);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.blur-box.is-draft { border-style: dashed; background: color-mix(in srgb, var(--accent) 12%, transparent); }
+
+.add-area {
+  height: 40px;
+  border-radius: var(--radius-m);
+  border: 1.5px dashed var(--line-strong);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 14px;
+  background: var(--inset);
+}
+
+.add-area[aria-pressed='true'] {
+  border-style: solid;
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.area-remove {
+  text-align: left;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 6px 2px;
+}
+
+.area-remove:hover { color: var(--danger); }
