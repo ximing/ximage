@@ -5,6 +5,7 @@ import ConvertFromJpg from './pages/convert-from-jpg';
 import ConvertToJpg from './pages/convert-to-jpg';
 import Crop from './pages/crop';
 import Meme from './pages/meme';
+import PhotoEditor from './pages/photo-editor';
 import BlurFace from './pages/blur-face';
 import HtmlToImage from './pages/html-to-image';
 import Resize from './pages/resize';
@@ -26,6 +27,7 @@ function toolPage(tool: Tool) {
   if (tool.id === 'convert-from-jpg') return <ConvertFromJpg />;
   if (tool.id === 'watermark') return <Watermark />;
   if (tool.id === 'meme') return <Meme />;
+  if (tool.id === 'photo-editor') return <PhotoEditor />;
   if (tool.id === 'upscale') return <Upscale />;
   if (tool.id === 'html-to-image') return <HtmlToImage />;
   if (tool.id === 'blur-face') return <BlurFace />;
